@@ -1,0 +1,22 @@
+{
+  "name": "spotify-corner-visualizer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Transparent always-on-top Spotify audio visualizer for Windows",
+  "main": "main.js",
+  "scripts": {
+    "start": "node_modules\\electron\\dist\\electron.exe .",
+    "build:installer": "electron-builder --config electron-builder.json --win nsis --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "^38.1.0",
+    "electron-builder": "26.0.12"
+  },
+  "allowScripts": {
+    "electron@38.8.6": true
+  },
+  "dependencies": {
+    "aubiojs": "^0.2.1",
+    "windows-media-sessions": "^1.0.3"
+  }
+}

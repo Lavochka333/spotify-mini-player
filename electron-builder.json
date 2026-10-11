@@ -1,0 +1,29 @@
+{
+  "appId": "local.spotify.corner.visualizer",
+  "productName": "Spotify Mini Player",
+  "directories": { "output": "dist" },
+  "electronDist": "node_modules/electron/dist",
+  "asar": false,
+  "npmRebuild": false,
+  "files": [
+    "main.js", "preload.js", "renderer.js", "index.html", "settings.html",
+    "style.css", "media-control.ps1", "audio-output.ps1", "spotify-mini-player.ico", "package.json"
+  ],
+  "win": {
+    "signAndEditExecutable": false,
+    "target": [{ "target": "nsis", "arch": ["x64"] }],
+    "icon": "spotify-mini-player.ico",
+    "artifactName": "setup.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createStartMenuShortcut": true,
+    "createDesktopShortcut": true,
+    "shortcutName": "Spotify Mini Player",
+    "deleteAppDataOnUninstall": false,
+    "runAfterFinish": true,
+    "installerLanguages": ["ru_RU", "en_US"]
+  }
+}

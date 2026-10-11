@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Spotify Visualizer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="widget" id="widget">
+    <div class="aurora"></div>
+    <div class="topbar">
+      <div class="controls">
+        <button class="output-toggle" id="outputToggle" title="Переключить аудиовыход" aria-label="Переключить аудиовыход">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g class="output-icon headphones-icon"><path d="M4.5 13.5V11a7.5 7.5 0 0 1 15 0v2.5M4.5 13.5h3v6h-3a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2Zm15 0h-3v6h3a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2Z"/></g>
+            <g class="output-icon speakers-icon"><path d="M4 9h4l5-4v14l-5-4H4V9Zm12.5.2a4 4 0 0 1 0 5.6M19 6.7a7.5 7.5 0 0 1 0 10.6"/></g>
+          </svg>
+        </button>
+        <button class="settings-button" id="settings" title="Настройки" aria-label="Настройки">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.03-.66-.08-.98l2.11-1.65-2-3.46-2.49 1a7.4 7.4 0 0 0-1.69-.98L15 3.25h-4l-.36 2.68c-.61.25-1.17.58-1.69.98l-2.49-1-2 3.46 2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65 2 3.46 2.49-1c.52.4 1.08.73 1.69.98l.36 2.68h4l.36-2.68c.61-.25 1.17-.58 1.69-.98l2.49 1 2-3.46-2.11-1.65ZM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
+        </button>
+        <button id="compact" title="Свернуть">−</button>
+        <button id="close" title="Закрыть">×</button>
+      </div>
+    </div>
+    <div class="ascii-stage" aria-hidden="true"><div class="ascii-rotator" id="asciiRotator"><pre class="ascii-display" id="asciiDisplay">♪♫</pre></div></div>
+    <div class="pivot-marker" id="pivotMarker" aria-hidden="true"></div>
+    <section class="content">
+      <div class="art-float"><div class="art">
+        <img id="cover" alt="Обложка трека">
+        <div class="fallback"><div class="disc"></div><span>♫</span></div>
+      </div></div>
+      <div class="info">
+        <div class="track-copy" id="trackCopy">
+          <div class="title" id="trackTitle">Ожидаю трек…</div>
+          <button class="subtitle connect" id="status">Включите музыку в Spotify</button>
+        </div>
+        <div class="lower-row">
+          <canvas id="visualizer" width="174" height="54"></canvas>
+          <div class="player-controls">
+            <button class="skip previous" id="previous" title="Предыдущий трек" aria-label="Предыдущий трек">
+              <span class="skip-bar"></span><span class="chevron"></span>
+            </button>
+            <button class="play-toggle" id="playPause" title="Пауза или воспроизведение" aria-label="Пауза или воспроизведение">
+              <svg viewBox="0 0 100 100" aria-hidden="true"><path id="morphIcon"></path></svg>
+            </button>
+            <button class="skip next" id="next" title="Следующий трек" aria-label="Следующий трек">
+              <span class="chevron"></span><span class="skip-bar"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="compact-mode">
+      <div class="compact-bars" id="compactBars" title="Развернуть"></div>
+      <button class="compact-close" id="compactClose" title="Закрыть">×</button>
+    </div>
+  </main>
+  <script src="node_modules/aubiojs/build/aubio.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

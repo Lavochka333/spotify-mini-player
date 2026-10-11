@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Настройки</title>
+  <style>
+    :root { color-scheme:dark; font-family:Inter,"Segoe UI",sans-serif; }
+    * { box-sizing:border-box; }
+    html,body { width:100%; height:100%; margin:0; overflow:hidden; background:transparent; }
+    body { padding:12px; }
+    .panel {
+      height:100%; overflow:hidden; border:1px solid rgba(255,255,255,.11); border-radius:24px;
+      background:linear-gradient(145deg,#14171c,#090b0e); color:#fff;
+      box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.07);
+    }
+    header { height:54px; padding:0 16px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.07); -webkit-app-region:drag; }
+    h1 { margin:0; font-size:14px; font-weight:650; letter-spacing:.2px; }
+    button { width:28px; height:28px; border:0; border-radius:9px; background:transparent; color:#798079; font-size:19px; cursor:pointer; -webkit-app-region:no-drag; transition:.2s ease; }
+    button:hover { color:white; background:rgba(255,255,255,.09); transform:rotate(6deg); }
+    .workspace { height:calc(100% - 54px); display:grid; grid-template-columns:142px 1fr; }
+    .sidebar { padding:14px 10px; border-right:1px solid rgba(255,255,255,.07); background:rgba(0,0,0,.13); }
+    .nav-label { padding:0 10px 9px; color:#505752; font-size:8px; font-weight:750; letter-spacing:1.4px; }
+    .nav-button { position:relative; width:100%; height:36px; margin-bottom:4px; padding:0 10px; display:flex; align-items:center; gap:9px; border-radius:11px; color:#747c77; font-size:11px; text-align:left; }
+    .nav-button:hover { transform:none; }
+    .nav-button.active { color:#f4f7f5; background:rgba(255,255,255,.075); }
+    .nav-button.active::before { content:""; position:absolute; left:-2px; width:3px; height:16px; border-radius:3px; background:#1ed760; box-shadow:0 0 9px rgba(30,215,96,.6); }
+    .nav-icon { width:18px; height:18px; display:grid; place-items:center; border-radius:6px; background:rgba(255,255,255,.045); font-size:10px; }
+    .content { height:100%; padding:20px; overflow:auto; }
+    .page { display:none; }
+    .page.active { display:block; animation:pageIn .24s ease; }
+    .placeholder { height:100%; display:none; place-items:center; text-align:center; color:#555d58; }
+    .placeholder.active { display:grid; }
+    .placeholder strong { display:block; margin-bottom:7px; color:#858e88; font-size:13px; }
+    .placeholder span { font-size:10px; }
+    .setting { display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .copy { min-width:0; }
+    .label { font-size:13px; font-weight:600; }
+    .hint { margin-top:5px; color:#737b76; font-size:10px; line-height:1.4; }
+    .actions { display:flex; gap:7px; }
+    .actions button { width:auto; height:30px; padding:0 12px; font-size:11px; color:#b7c0ba; background:rgba(255,255,255,.06); }
+    .actions button:hover { transform:none; background:rgba(255,255,255,.1); }
+    .preview { margin-top:14px; height:74px; display:grid; place-items:center; overflow:hidden; border:1px dashed rgba(255,255,255,.1); border-radius:14px; background:#090b0e; }
+    .preview img { max-width:62px; max-height:62px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,.4); }
+    .empty { color:#535a56; font-size:11px; }
+    .sliders { margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; }
+    .control-row { display:grid; grid-template-columns:1fr auto; gap:4px 8px; align-items:center; color:#929a95; font-size:10px; }
+    .control-row output { color:#d5dbd7; font-variant-numeric:tabular-nums; }
+    input[type=range] { grid-column:1/-1; width:100%; height:3px; accent-color:#1ed760; }
+    .check { margin-top:12px; display:flex; align-items:center; gap:7px; color:#b8c0bb; font-size:11px; }
+    .check input { accent-color:#1ed760; }
+    .option-buttons { margin-top:10px; display:flex; gap:8px; }
+    .option-buttons button { width:auto; height:29px; padding:0 11px; font-size:10px; color:#aeb6b1; background:rgba(255,255,255,.06); }
+    .option-buttons button:hover { transform:none; background:rgba(255,255,255,.1); }
+    .option-buttons button.active { color:#071009; background:#1ed760; }
+    .option-buttons button.danger { color:#dc8d8d; }
+    select { max-width:235px; padding:7px; border:1px solid #343b36; border-radius:8px; background:#171c19; color:#e1e8e3; font:inherit; }
+    header { height:68px; padding:0 20px 0 24px; }
+    h1 { font-size:17px; }
+    .header-subtitle { margin-top:4px; color:#87958d; font-size:11px; }
+    .workspace { height:calc(100% - 68px); grid-template-columns:158px minmax(0,1fr); }
+    .sidebar { padding:22px 12px; }
+    .nav-label { font-size:9px; color:#839088; }
+    .nav-button { height:43px; font-size:12px; margin-bottom:7px; }
+    .nav-icon { width:23px; height:23px; font-size:12px; }
+    .nav-button.active { background:rgba(30,215,96,.10); }
+    .content { padding:24px; scrollbar-width:thin; scrollbar-color:#35453b transparent; }
+    .setting { align-items:flex-start; flex-wrap:wrap; gap:12px; }
+    .label { font-size:17px; }
+    .hint { color:#929e97; font-size:11px; line-height:1.6; }
+    .actions button { height:34px; font-size:12px; }
+    #choose { background:#1ed760; color:#082311; font-weight:600; }
+    #choose:hover { background:#41e47b; }
+    .preview { height:88px; margin-top:18px; border-style:solid; background:radial-gradient(ellipse at center,rgba(30,215,96,.055),transparent 75%),#0c100e; }
+    .preview img { max-width:76px; max-height:76px; }
+    .empty { color:#8a978f; }
+    .sliders { padding:16px; border:1px solid rgba(255,255,255,.07); border-radius:14px; background:rgba(255,255,255,.025); gap:14px 22px; }
+    .control-row { color:#b4bfb8; font-size:11px; gap:7px; }
+    .control-row output { padding:2px 6px; border-radius:5px; background:rgba(255,255,255,.055); color:#d5efde; }
+    input[type=range] { height:14px; margin:0; cursor:pointer; }
+    input:disabled { opacity:.35; cursor:default; }
+    .check { margin-top:16px; font-size:12px; flex-wrap:wrap; }
+    .option-buttons { flex-wrap:wrap; margin-top:16px; }
+    .option-buttons button { height:34px; font-size:11px; }
+    button:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid #1ed760; outline-offset:3px; }
+    .placeholder strong { color:#d0dcd4; font-size:17px; }
+    .placeholder span { color:#929e97; font-size:12px; }
+    @media(max-width:580px) { .workspace { grid-template-columns:130px minmax(0,1fr); } .content { padding:16px; } .sliders { grid-template-columns:1fr; } select { max-width:100%; } }
+    @media(prefers-reduced-motion:reduce) { *, *::before { animation:none!important; transition:none!important; } }
+    @keyframes pageIn { from{opacity:0;transform:translateX(6px)} to{opacity:1;transform:none} }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <header><div><h1>Настройки</h1><div class="header-subtitle">Изменения сохраняются автоматически</div></div><button id="close" title="Закрыть" aria-label="Закрыть настройки">×</button></header>
+    <div class="workspace">
+      <nav class="sidebar">
+        <div class="nav-label">РАЗДЕЛЫ</div>
+        <button class="nav-button active" data-target="ascii"><span class="nav-icon">Aa</span>ASCII</button>
+        <button class="nav-button" data-target="widget"><span class="nav-icon">▣</span>Виджет</button>
+        <button class="nav-button" data-target="visualizer"><span class="nav-icon">≋</span>Визуализатор</button>
+      </nav>
+      <section class="content page active" data-page="ascii">
+      <div class="setting">
+        <div class="copy"><div class="label">ASCII-анимация</div><div class="hint">PNG, JPG, WebP или GIF · перетаскивайте анимацию прямо на мини-плеере<br>Выберите ASCII, цветные символы или исходную картинку</div></div>
+        <div class="actions"><button id="choose">Выбрать</button><button id="clear">Сбросить</button></div>
+      </div>
+      <div class="preview" id="preview"><span class="empty">Изображение не выбрано</span></div>
+      <label class="check">Отображение <select id="displayMode"><option value="ascii">ASCII в цвете обложки</option><option value="colorAscii">Цветной ASCII</option><option value="image">Исходная цветная картинка</option></select></label>
+      <div class="sliders">
+        <label class="control-row">Ширина <output id="widthOut"></output><input id="width" type="range" min="40" max="120"></label>
+        <label class="control-row">Высота <output id="heightOut"></output><input id="height" type="range" min="24" max="76"></label>
+        <label class="control-row">Символов в строке <output id="symbolsOut"></output><input id="symbols" type="range" min="6" max="28"></label>
+        <label class="control-row">Количество кадров <output id="framesOut"></output><input id="frames" type="range" min="4" max="60"></label>
+        <label class="control-row">Скорость оборота <output id="speedOut"></output><input id="speed" type="range" min="1" max="12" step="0.5"></label>
+        <label class="control-row">Угол оборота <output id="rotationOut"></output><input id="rotation" type="range" min="5" max="80"></label>
+        <label class="control-row">Прозрачность <output id="opacityOut"></output><input id="opacity" type="range" min="5" max="100"></label>
+        <label class="control-row">Опорная точка X <output id="originXOut"></output><input id="originX" type="range" min="0" max="100" step="0.5"></label>
+        <label class="control-row">Опорная точка Y <output id="originYOut"></output><input id="originY" type="range" min="0" max="100" step="0.5"></label>
+      </div>
+      <label class="check"><input id="full360" type="checkbox"> Полный оборот 360°</label>
+      <div class="option-buttons"><button id="lockAspect">Сохранять пропорции</button><button class="danger" id="hideAscii">Убрать ASCII</button></div>
+      </section>
+      <section class="content page" data-page="widget">
+        <label class="check"><input id="coverWiggle" type="checkbox"> Плавание обложки</label>
+        <div class="hint">Лёгкое плавное покачивание · работает вместе с пульсацией под бит</div>
+        <div class="label">Пульсация обложки под бит</div>
+        <label class="check">Определение бита <select id="beatDetector"><option value="aubiojs">aubiojs — рекомендуется</option><option value="bass">Бас</option></select></label>
+        <div class="hint">aubiojs определяет музыкальный ритм по звуку. После запуска или смены трека ему нужно несколько секунд на обучение.</div>
+        <div class="hint">Чем выше чувствительность, тем слабее может быть удар для пульсации. Размер пульсации остаётся небольшим.</div>
+        <div class="sliders"><label class="control-row">Чувствительность <output id="bassSensitivityOut">50%</output><input id="bassSensitivity" type="range" min="0" max="100" step="1" value="50"></label></div>
+        <div class="hint">0% — выключено · изменения применяются сразу и сохраняются</div>
+        <div id="bassOptions">
+        <label class="check"><input id="bassMethod" type="checkbox" checked> Басовые удары</label>
+        <label class="check"><input id="spectralMethod" type="checkbox" checked> Удары по всему спектру</label>
+        <label class="check"><input id="rhythmMethod" type="checkbox" checked> Отслеживать ритм по басу</label>
+        <div class="hint">После нескольких повторяющихся басовых ударов запоминает темп, лучше замечает слабые удары и восполняет один пропущенный, пока бас слышен. Для этого включите «Басовые удары». При тишине или потере ритма шаблон сбрасывается.</div>
+        </div>
+      </section>
+      <section class="content page" data-page="visualizer"><div class="label">Визуализатор</div><div class="hint">Меняется сразу · цвета подстраиваются под обложку трека</div><label class="check">Стиль <select id="visualizerType"><option value="bars">Полосы</option><option value="mirror">Зеркальный спектр</option><option value="wave">Звуковая волна</option><option value="dots">Точки</option></select></label><div class="hint">В компактном режиме остаются маленькие полосы.</div></section>
+    </div>
+  </main>
+  <script>
+    const preview = document.querySelector('#preview');
+    document.querySelectorAll('.nav-button').forEach(button => button.onclick=()=>{
+      document.querySelectorAll('.nav-button').forEach(item=>item.classList.toggle('active',item===button));
+      document.querySelectorAll('.page').forEach(page=>page.classList.toggle('active',page.dataset.page===button.dataset.target));
+    });
+    function showImage(url) {
+      preview.replaceChildren();
+      if (!url) { const empty=document.createElement('span'); empty.className='empty'; empty.textContent='Изображение не выбрано'; preview.append(empty); return; }
+      const img=document.createElement('img'); img.src=url; img.alt='Выбранная ASCII-анимация'; preview.append(img);
+    }
+    document.querySelector('#close').onclick = () => window.widget.closeSettings();
+    document.querySelector('#choose').onclick = async () => showImage(await window.widget.chooseAsciiImage());
+    document.querySelector('#clear').onclick = async () => showImage(await window.widget.clearAsciiImage());
+    window.widget.onAsciiImage(showImage);
+    window.widget.getAsciiImage().then(showImage);
+    const ids=['width','height','symbols','frames','speed','rotation','opacity','originX','originY'];
+    let applying=false;
+    let settingsState={};
+    function applySettings(value) {
+      settingsState=value;
+      document.querySelector('#displayMode').value=value.displayMode;
+      document.querySelector('#symbols').disabled=value.displayMode==='image';
+      applying=true;
+      ids.forEach(id => { document.querySelector(`#${id}`).value=value[id]; document.querySelector(`#${id}Out`).textContent=id==='rotation'?`${value[id]}°`:id==='opacity'||id==='originX'||id==='originY'?`${Math.round(value[id]*10)/10}%`:id==='speed'?`${value[id]} с`:value[id]; });
+      document.querySelector('#full360').checked=value.full360;
+      document.querySelector('#rotation').disabled=value.full360;
+      document.querySelector('#lockAspect').classList.toggle('active',value.lockAspect);
+      document.querySelector('#hideAscii').textContent=value.hidden?'Показать ASCII':'Убрать ASCII';
+      applying=false;
+    }
+    async function updateSettings(changedId) {
+      if (applying) return;
+      const value=Object.fromEntries(ids.map(id=>[id,Number(document.querySelector(`#${id}`).value)]));
+      value.full360=document.querySelector('#full360').checked;
+      value.lockAspect=settingsState.lockAspect;
+      value.hidden=settingsState.hidden;
+      if (value.lockAspect && changedId==='width') value.height=Math.max(24,Math.min(76,Math.round(value.width*43/76)));
+      if (value.lockAspect && changedId==='height') value.width=Math.max(40,Math.min(120,Math.round(value.height*76/43)));
+      applySettings(await window.widget.updateAsciiSettings(value));
+    }
+    ids.forEach(id=>document.querySelector(`#${id}`).addEventListener('input',()=>updateSettings(id)));
+    document.querySelector('#full360').addEventListener('change',()=>updateSettings('full360'));
+    document.querySelector('#lockAspect').onclick=async()=>applySettings(await window.widget.updateAsciiSettings({lockAspect:!settingsState.lockAspect}));
+    document.querySelector('#hideAscii').onclick=async()=>applySettings(await window.widget.updateAsciiSettings({hidden:!settingsState.hidden}));
+    document.querySelector('#displayMode').onchange=async event=>applySettings(await window.widget.updateAsciiSettings({displayMode:event.target.value}));
+    const visualizerSelect=document.querySelector('#visualizerType');
+    const sensitivitySlider=document.querySelector('#bassSensitivity');
+    const sensitivityOutput=document.querySelector('#bassSensitivityOut');
+    const applyWidget=value=>{
+      if (typeof value.coverWiggle==='boolean') document.querySelector('#coverWiggle').checked=value.coverWiggle;
+      if (value.beatDetector) {
+        document.querySelector('#beatDetector').value=value.beatDetector;
+        document.querySelector('#bassOptions').hidden=value.beatDetector!=='bass';
+      }
+      sensitivitySlider.value=value.bassSensitivity;
+      sensitivityOutput.textContent=value.bassSensitivity===0?'Выключено':`${value.bassSensitivity}%`;
+      for (const id of ['bassMethod','spectralMethod','rhythmMethod']) if (typeof value[id]==='boolean') document.querySelector(`#${id}`).checked=value[id];
+    };
+    sensitivitySlider.oninput=()=>{
+      const bassSensitivity=Number(sensitivitySlider.value);
+      applyWidget({bassSensitivity});
+      window.widget.updateWidgetSettings({bassSensitivity});
+    };
+    window.widget.onWidgetSettings(applyWidget);
+    document.querySelector('#coverWiggle').onchange=event=>{
+      window.widget.updateWidgetSettings({coverWiggle:event.target.checked});
+    };
+    document.querySelector('#beatDetector').onchange=event=>{
+      document.querySelector('#bassOptions').hidden=event.target.value!=='bass';
+      window.widget.updateWidgetSettings({beatDetector:event.target.value});
+    };
+    for (const id of ['bassMethod','spectralMethod','rhythmMethod']) document.querySelector(`#${id}`).onchange=event=>{
+      window.widget.updateWidgetSettings({[id]:event.target.checked});
+    };
+    window.widget.getWidgetSettings().then(applyWidget);
+    const applyVisualizer=value=>{visualizerSelect.value=value.type;};
+    visualizerSelect.onchange=async()=>applyVisualizer(await window.widget.updateVisualizerSettings({type:visualizerSelect.value}));
+    window.widget.onVisualizerSettings(applyVisualizer);
+    window.widget.getVisualizerSettings().then(applyVisualizer);
+    window.widget.onAsciiSettings(applySettings);
+    window.widget.getAsciiSettings().then(applySettings);
+  </script>
+</body>
+</html>
